@@ -52,3 +52,4 @@ Key arguments are:
 - `--no-rproj`: Disable the creation of an R Project file
 - `--no-readme`: Do not create a README.md file
 - `--no-snakemake`: Do not create the basic template for a Snakemake workflow. This will exclude the contents of the `workflow/` directory and the contents of the  `config/` directory
+- `--minimal`: Will turn on all `--no-*` flags and only create a minimal directory structure excluding all template files, the git repository, the `workflow` folder and the R Project file

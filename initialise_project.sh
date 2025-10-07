@@ -6,6 +6,8 @@ initialise_project() {
     local do_readme=true
     local do_rproj=true
     local do_snakemake=true
+    local minimal=false
+    local do_analysis_files=true
 
     # Parse arguments
     for arg in "$@"; do
@@ -14,6 +16,14 @@ initialise_project() {
             --no-readme) do_readme=false ;;
             --no-rproj) do_rproj=false ;;
             --no-snakemake) do_snakemake=false ;;
+            --minimal)
+                minimal=true
+                do_git=false
+                do_readme=false
+                do_rproj=false
+                do_snakemake=false
+                do_analysis_files=false
+                ;;
             *) project_dir="$arg" ;;
         esac
     done
@@ -52,8 +62,6 @@ initialise_project() {
         mkdir -p "${project_dir}/${subdir}"
     done
 
-    touch "${project_dir}/analysis/references.bib"
-
     # README.md
     if $do_readme; then
         local readme="${project_dir}/README.md"
@@ -78,22 +86,28 @@ EOF
         fi
     fi
 
+    # References
+    if $do_analysis_files; then
+        touch "${project_dir}/analysis/references.bib"
+    fi
+
     # _site.yml
-    local site_yml="${project_dir}/analysis/_site.yml"
-    if [[ ! -f "$site_yml" ]]; then
-        cat > "$site_yml" <<EOF
+    if $do_analysis_files; then
+        local site_yml="${project_dir}/analysis/_site.yml"
+        if [[ ! -f "$site_yml" ]]; then
+            cat > "$site_yml" <<EOF
 name: ${project_name}
 output_dir: ../docs
 navbar:
-  title: ${project_name}
-  left:
-  - text: Home
+title: ${project_name}
+left:
+- text: Home
     href: index.html
-  right:
-  - icon: fa-github
+right:
+- icon: fa-github
     href: 
 output:
-  bookdown::html_document2:
+bookdown::html_document2:
     code_folding: hide
     toc: yes
     toc_float: yes
@@ -101,13 +115,15 @@ output:
     highlight: textmate
 
 EOF
-        echo "Created _site.yml"
+            echo "Created _site.yml"
+        fi
     fi
 
     # index.Rmd
-    local index_rmd="${project_dir}/analysis/index.Rmd"
-    if [[ ! -f "$index_rmd" ]]; then
-        cat > "$index_rmd" <<'EOF'
+    if $do_analysis_files; then
+        local index_rmd="${project_dir}/analysis/index.Rmd"
+        if [[ ! -f "$index_rmd" ]]; then
+            cat > "$index_rmd" <<'EOF'
 ---
 title: "${project_name}"
 date: "`r format(Sys.Date(), '%d %B, %Y')`"
@@ -142,7 +158,8 @@ pander::pander(sessionInfo())
 </div>
 
 EOF
-        echo "Created index.Rmd"
+            echo "Created index.Rmd"
+        fi
     fi
 
     # Git init
