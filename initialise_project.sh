@@ -52,6 +52,8 @@ initialise_project() {
         mkdir -p "${project_dir}/${subdir}"
     done
 
+    touch "${project_dir}/analysis/references.bib"
+
     # README.md
     if $do_readme; then
         local readme="${project_dir}/README.md"
@@ -76,6 +78,73 @@ EOF
         fi
     fi
 
+    # _site.yml
+    local site_yml="${project_dir}/analysis/_site.yml"
+    if [[ ! -f "$site_yml" ]]; then
+        cat > "$site_yml" <<EOF
+name: ${project_name}
+output_dir: ../docs
+navbar:
+  title: ${project_name}
+  left:
+  - text: Home
+    href: index.html
+  right:
+  - icon: fa-github
+    href: 
+output:
+  bookdown::html_document2:
+    code_folding: hide
+    toc: yes
+    toc_float: yes
+    theme: sandstone
+    highlight: textmate
+
+EOF
+        echo "Created _site.yml"
+    fi
+
+    # index.Rmd
+    local index_rmd="${project_dir}/analysis/index.Rmd"
+    if [[ ! -f "$index_rmd" ]]; then
+        cat > "$index_rmd" <<'EOF'
+---
+title: "${project_name}"
+date: "`r format(Sys.Date(), '%d %B, %Y')`"
+bibliography: references.bib
+link-citations: true
+output:
+  bookdown::html_document2:
+    number_sections: false
+---
+
+'```{r setup, echo = FALSE}
+knitr::opts_chunk$set(
+  message = FALSE, warning = FALSE, fig.height = 8, fig.width = 10
+)
+```
+
+# Introduction
+
+## References
+
+<div id="refs"></div>
+
+<br>
+<button type="button" class="btn btn-default btn-sessioninfo" data-toggle="collapse" data-target="#sessioninfo" style="display: block;">
+<span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span> Session information
+</button>
+</p>
+<div id="sessioninfo" class="collapse">
+```{r session-info, echo=FALSE}
+pander::pander(sessionInfo())
+```
+</div>
+
+EOF
+        echo "Created index.Rmd"
+    fi
+
     # Git init
     if $do_git; then
         if [[ ! -d "${project_dir}/.git" ]]; then
@@ -83,7 +152,7 @@ EOF
             echo "Initialized Git repository"
         fi
         echo "${project_name}.Rproj" >> "${project_dir}/.gitignore"
-        echo 'logs/' >> "${project_dir}/.gitignore"
+        echo 'workflow/logs/' >> "${project_dir}/.gitignore"
         echo 'data/' >> "${project_dir}/.gitignore"
     fi
 
@@ -137,6 +206,8 @@ EOF
             echo "Created workflow/Snakefile"
         fi
     fi
+
+    
 
     echo "✅ Project '${project_name}' initialized successfully."
 }

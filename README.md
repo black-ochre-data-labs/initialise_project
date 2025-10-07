@@ -4,16 +4,20 @@ This contains a simple bash script to initialise a new project directory with a 
 The default directories and files will becreated as follows
 
 ```
+.
 ├── analysis
+│   ├── index.Rmd
+│   ├── references.bib
+│   └── _site.yml
 ├── config
 │   └── config.yml
 ├── data
 │   └── external
 ├── docs
+├── initial_prophecy_analysis.Rproj
 ├── output
 ├── README.md
 ├── scripts
-├── {project_name}.Rproj
 └── workflow
     ├── benchmarks
     ├── envs
@@ -25,6 +29,11 @@ The default directories and files will becreated as follows
 
 By default:
 
+- The most basic structure for an integrated RMarkdown and Snakemake workflow will be created
+    - This includes `analysis/_site.yml` where any subsequent analyses can be added to the compiled html
+    - `analysis/index.Rmd` with a basic YAML header, references and `sessionInfo()`
+    - An empty `reference.bib` file for citations
+    - A basic `Snakefile` and directory structure for Snakemake
 - An RStudio project file will be created
 - A git repository will be initialised
 - A README.md file will be created
