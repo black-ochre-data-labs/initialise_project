@@ -99,15 +99,15 @@ EOF
 name: ${project_name}
 output_dir: ../docs
 navbar:
-title: ${project_name}
-left:
-- text: Home
-    href: index.html
-right:
-- icon: fa-github
-    href: 
+  title: ${project_name}
+  left:
+    - text: Home
+      href: index.html
+  right:
+    - icon: fa-github
+      href: 
 output:
-bookdown::html_document2:
+  bookdown::html_document2:
     code_folding: hide
     toc: yes
     toc_float: yes
@@ -123,9 +123,12 @@ EOF
     if $do_analysis_files; then
         local index_rmd="${project_dir}/analysis/index.Rmd"
         if [[ ! -f "$index_rmd" ]]; then
-            cat > "$index_rmd" <<'EOF'
+            cat > "$index_rmd" <<EOF
 ---
 title: "${project_name}"
+EOF
+
+            cat >> "$index_rmd" <<'EOF'
 date: "`r format(Sys.Date(), '%d %B, %Y')`"
 bibliography: references.bib
 link-citations: true
@@ -134,7 +137,7 @@ output:
     number_sections: false
 ---
 
-'```{r setup, echo = FALSE}
+```{r setup, echo = FALSE}
 knitr::opts_chunk$set(
   message = FALSE, warning = FALSE, fig.height = 8, fig.width = 10
 )
@@ -214,8 +217,11 @@ import os
 
 configfile: "config/config.yml"
 
+# Define all output files here
+ALL_OUTPUT = []
+
 rule all:
-    input:
+    input: ALL_OUTPUT
 
 include:
 
