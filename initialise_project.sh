@@ -30,7 +30,12 @@ initialise_project() {
 
     # Get project name (used for .Rproj)
     local project_name
-    project_name=$(basename "$(realpath "$project_dir")")
+    if [[ "$project_dir" == "." ]]; then
+        project_name=$(basename "$PWD")
+    else
+        project_name=$(basename "$project_dir")
+    fi
+
 
     echo "Initializing project in: $project_dir"
 
