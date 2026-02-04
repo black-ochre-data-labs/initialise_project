@@ -100,11 +100,11 @@ EOF
     if $do_analysis_files; then
         local site_yml="${project_dir}/analysis/_site.yml"
         if [[ ! -f "$site_yml" ]]; then
-            cat > "$site_yml" <<EOF
-name: ${project_name}
+            cat > "$site_yml" <<'EOF'
+name: __PROJECT_NAME__
 output_dir: ../docs
 navbar:
-  title: ${project_name}
+  title: __PROJECT_NAME__
   left:
     - text: Home
       href: index.html
@@ -120,9 +120,11 @@ output:
     highlight: textmate
 
 EOF
+            sed "s/__PROJECT_NAME__/${project_name}/g" "$site_yml" > "${site_yml}.tmp" && mv "${site_yml}.tmp" "$site_yml" 
             echo "Created _site.yml"
         fi
     fi
+
 
     # index.Rmd
     if $do_analysis_files; then
